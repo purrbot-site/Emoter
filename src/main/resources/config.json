@@ -1,0 +1,11 @@
+{
+  "token": "bot-token",
+  
+  "guild": "guild-id",
+  "channel": "channel-id",
+  
+  "database": {
+    "ip": "ip",
+    "name": "name"
+  }
+}
