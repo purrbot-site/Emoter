@@ -37,6 +37,7 @@ public class EmoteManager{
                         false
                 );
                 sb = new StringBuilder(getEmoteInfo(emote)).append("\n");
+                continue;
             }
             
             sb.append(getEmoteInfo(emote)).append("\n");
