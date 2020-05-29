@@ -3,13 +3,11 @@ package site.purrbot.emoter;
 import ch.qos.logback.classic.Logger;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
-import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.slf4j.LoggerFactory;
@@ -31,7 +29,7 @@ public class Emoter{
     private DBManager dbManager;
     private EmoteManager emoteManager;
     
-    private final Cache<DBManager.EmoteType, String> messages = Caffeine.newBuilder()
+    private final Cache<EmoteType, String> messages = Caffeine.newBuilder()
             .expireAfterWrite(10, TimeUnit.MINUTES)
             .build();
     
@@ -71,16 +69,16 @@ public class Emoter{
         return fileManager;
     }
     
-    public String getId(DBManager.EmoteType type){
+    public String getId(EmoteType type){
         return messages.get(type, k -> dbManager.getId(type));
     }
     
-    public void setId(DBManager.EmoteType type, String value){
+    public void setId(EmoteType type, String value){
         messages.put(type, value);
         dbManager.setId(type, value);
     }
     
-    public void updateMessage(DBManager.EmoteType type, Guild guild){
+    public void updateMessage(EmoteType type, Guild guild){
         TextChannel tc = guild.getTextChannelById(fileManager.getString("config", "channel"));
         if(tc == null)
             return;
@@ -104,5 +102,86 @@ public class Emoter{
                     emoteManager.getEmbed(guild, type)
             ).queue();
         }
+    }
+    
+    public void sendLog(TextChannel channel, LogType type, Emote emote){
+        int color;
+        String title;
+        
+        switch(type){
+            case ADDED:
+                color = 0x00FF00;
+                title = "Emote added";
+                break;
+            
+            case REMOVED:
+                color = 0xFF0000;
+                title = "Emote removed";
+                break;
+            
+            case EDITED:
+                color = 0xF1C40F;
+                title = "Emote changed";
+                break;
+            
+            default:
+                color = 0x802F3136;
+                title = "Unknown Action";
+        }
+        
+        MessageEmbed embed = new EmbedBuilder()
+                .setColor(color)
+                .setTitle(title)
+                .addField(
+                        "Name",
+                        String.format(
+                                "`:%s:`",
+                                emote.getName()
+                        ),
+                        true
+                )
+                .addField(
+                        "ID",
+                        String.format(
+                                "`%s`",
+                                emote.getId()
+                        ),
+                        true
+                )
+                .addField(
+                        "Format",
+                        String.format(
+                                "`%s`",
+                                emote.getAsMention()
+                        ),
+                        true
+                )
+                .addField(
+                        "Preview",
+                        emote.getAsMention(),
+                        true
+                )
+                .addField(
+                        "URL",
+                        String.format(
+                                "[`Click here`](%s)",
+                                emote.getImageUrl()
+                        ),
+                        true
+                )
+                .build();
+        
+        channel.sendMessage(embed).queue();
+    }
+    
+    public enum LogType{
+        ADDED,
+        EDITED,
+        REMOVED
+    }
+    
+    public enum EmoteType{
+        NORMAL,
+        ANIMATED
     }
 }

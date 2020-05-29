@@ -6,7 +6,6 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import site.purrbot.emoter.Emoter;
-import site.purrbot.emoter.manager.DBManager;
 
 import javax.annotation.Nonnull;
 
@@ -28,7 +27,7 @@ public class ReadyListener extends ListenerAdapter{
         if(guild == null)
             return;
     
-        bot.updateMessage(DBManager.EmoteType.NORMAL, guild);
-        bot.updateMessage(DBManager.EmoteType.ANIMATED, guild);
+        bot.updateMessage(Emoter.EmoteType.NORMAL, guild);
+        bot.updateMessage(Emoter.EmoteType.ANIMATED, guild);
     }
 }

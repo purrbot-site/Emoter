@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import site.purrbot.emoter.Emoter;
 
 import java.util.Comparator;
 import java.util.List;
@@ -12,9 +13,9 @@ import java.util.stream.Collectors;
 public class EmoteManager{
     
     
-    public MessageEmbed getEmbed(Guild guild, DBManager.EmoteType type){
+    public MessageEmbed getEmbed(Guild guild, Emoter.EmoteType type){
         List<Emote> emotes;
-        if(type.equals(DBManager.EmoteType.ANIMATED))
+        if(type.equals(Emoter.EmoteType.ANIMATED))
             emotes = guild.getEmotes().stream()
                     .filter(Emote::isAnimated)
                     .sorted(Comparator.comparing(Emote::getName))

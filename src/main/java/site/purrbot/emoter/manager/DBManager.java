@@ -21,14 +21,14 @@ public class DBManager{
                 .connect();
     }
     
-    public String getId(EmoteType type){
+    public String getId(Emoter.EmoteType type){
         check();
         Map map = getTable();
         
         return map.get(type.toString().toLowerCase()).toString();
     }
     
-    public void setId(EmoteType type, String value){
+    public void setId(Emoter.EmoteType type, String value){
         check();
         
         r.table("messages").get("0").update(r.hashMap(type.toString().toLowerCase(), value)).run(connection);
@@ -49,14 +49,9 @@ public class DBManager{
         r.table("messages").insert(
                 r.array(
                         r.hashMap("id", "0")
-                         .with(EmoteType.NORMAL.toString().toLowerCase(), "null")
-                         .with(EmoteType.ANIMATED.toString().toLowerCase(), "null")
+                         .with(Emoter.EmoteType.NORMAL.toString().toLowerCase(), "null")
+                         .with(Emoter.EmoteType.ANIMATED.toString().toLowerCase(), "null")
                 )
         ).optArg("conflict", "update").run(connection);
-    }
-    
-    public enum EmoteType{
-        NORMAL,
-        ANIMATED
     }
 }

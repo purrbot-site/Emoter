@@ -3,6 +3,7 @@
   
   "guild": "guild-id",
   "channel": "channel-id",
+  "log": "log-id",
   
   "database": {
     "ip": "ip",
